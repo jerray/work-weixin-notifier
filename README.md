@@ -1,5 +1,20 @@
-# Container Action Template
+# Work Weixin Notifier
 
-To get started, click the `Use this template` button on this repository [which will create a new repository based on this template](https://github.blog/2019-06-06-generate-new-repositories-with-repository-templates/).
+Send notification to Work Weixin group using Group Bot.
 
-For info on how to build your first Container action, see the [toolkit docs folder](https://github.com/actions/toolkit/blob/master/docs/container-action.md).
+## Usage
+
+```yaml
+- uses: jerray/work-weixin-notifier@latest
+  if: always()
+  with:
+    key: ${{ secrets.weixin_key }}
+    type: text
+    content: '{{ github.Repository }} build finished'
+    status: ${{ job.status }}
+```
+
+Content is parsed and rendered with handlebars template parser. All default environments are
+grouped under `github` object. Input values are grouped under `inputs` object. Keys are **CamelCased**.
+
+Note: `GITHUB_SHA` in the template renamed to `github.Commit`.

@@ -1,12 +1,19 @@
-name: 'Container Action Template'
-description: 'Get started with Container actions'
-author: 'GitHub'
-inputs: 
-  myInput:
-    description: 'Input to use'
-    default: 'world'
+name: 'Work Weixin Notifier'
+description: 'Get notification to Work Weixin using group Bot'
+author: 'jerray'
+inputs:
+  key:
+    description: 'Work Weixin Bot key'
+    required: true
+  type:
+    description: 'Message type, text or markdown'
+    default: 'text'
+  status:
+    description: 'Job status'
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.myInput }}
+branding:
+  icon: 'send'
+  color: 'green'
