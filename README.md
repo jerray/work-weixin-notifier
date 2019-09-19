@@ -5,7 +5,7 @@ Send notification to Work Weixin group using Group Bot.
 ## Usage
 
 ```yaml
-- uses: jerray/work-weixin-notifier@latest
+- uses: jerray/work-weixin-notifier@v1.0.0
   if: always()
   with:
     key: ${{ secrets.weixin_key }}
