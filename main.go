@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/aymerick/raymond"
 	"github.com/caarlos0/env/v6"
@@ -28,6 +29,15 @@ type Inputs struct {
 	Type    string `env:"INPUT_TYPE" envDefault:"text"`
 	Content string `env:"INPUT_CONTENT"`
 	Status  string `env:"INPUT_STATUS"`
+}
+
+type BuildContext struct {
+	Owner  string
+	Name   string
+	Branch string
+	Tag    string
+	Commit string
+	Link   string
 }
 
 type Content struct {
@@ -54,10 +64,14 @@ func main() {
 		fmt.Printf("failed to parse inputs: %s\n", err)
 		os.Exit(1)
 	}
+	inputs.Status = strings.ToLower(inputs.Status)
+
+	build := resolveBuildContext(environments)
 
 	ctx := map[string]interface{}{
 		"github": environments,
 		"inputs": inputs,
+		"build":  build,
 	}
 
 	content := &Content{}
@@ -110,4 +124,29 @@ func send(key string, message Message) error {
 	fmt.Printf("resposne %d: %s", status, string(body))
 
 	return nil
+}
+
+func resolveBuildContext(envs Environments) BuildContext {
+	result := BuildContext{}
+	result.Commit = envs.Commit[:10]
+
+	refs := strings.SplitN(envs.Ref, "/", 3)
+	if len(refs) == 3 {
+		switch refs[1] {
+		case "heads":
+			result.Branch = refs[2]
+			result.Link = fmt.Sprintf("https://github.com/%s/commit/%s", envs.Repository, envs.Commit)
+		case "tags":
+			result.Tag = refs[2]
+			result.Link = fmt.Sprintf("https://github.com/%s/tree/%s", envs.Repository, result.Tag)
+		}
+	}
+
+	repos := strings.Split(envs.Repository, "/")
+	if len(repos) == 2 {
+		result.Owner = repos[0]
+		result.Name = repos[1]
+	}
+
+	return result
 }
