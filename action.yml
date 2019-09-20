@@ -13,7 +13,7 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'docker://jerray/work-weixin-notifier:latest'
+  image: 'docker://jerray/work-weixin-notifier:1.1.0'
 branding:
   icon: 'send'
   color: 'green'
